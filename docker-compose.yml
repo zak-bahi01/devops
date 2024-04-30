@@ -14,7 +14,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
     networks:
-      - springboot-mysql-network
+      - pipipeline-mysql-network
   mysqldb:
     image: mysql:8.0.33
     ports:
@@ -25,7 +25,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
-      - pipline-mysql-network
+      - pipipeline-mysql-network
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       retries: 10
@@ -35,5 +35,5 @@ services:
 volumes:
   mysql-data:
 networks:
-  springboot-mysql-network:
-    name: pipline-mysql-network
+  pipipeline-mysql-network:
+    name: pipipeline-mysql-network
