@@ -25,7 +25,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
-      - springboot-mysql-network
+      - pipline-mysql-network
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       retries: 10
@@ -36,4 +36,4 @@ volumes:
   mysql-data:
 networks:
   springboot-mysql-network:
-    name: springboot-mysql-network
+    name: pipline-mysql-network
