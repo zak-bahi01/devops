@@ -36,4 +36,5 @@ volumes:
   mysql-data:
 networks:
   pipipeline-mysql-network:
-    name: pipipeline-mysql-network
+    external: true
+
