@@ -1,9 +1,7 @@
 version: '3.7'
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: amdevops36/enhancedcicd:latest
     ports:
       - 8080:8080
     depends_on:
@@ -37,4 +35,3 @@ volumes:
 networks:
   springboot-mysql-network:
     external: true
-
