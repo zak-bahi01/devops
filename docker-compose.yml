@@ -8,9 +8,9 @@ services:
       mysqldb:
         condition: service_healthy
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/${MYSQL_DATABASE}
+      - SPRING_DATASOURCE_URL=jdbc:mysql://${MYSQL_DB_HOST}:${MYSQL_DB_PORT}/${MYSQL_DB_DNAME}?allowPublicKeyRetrieval=true&useSSL=false
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=${MYSQL_PASSWORD}
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_DB_PASSWORD}
     networks:
       - springboot-mysql-network
   mysqldb:
@@ -18,8 +18,8 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DB_DNAME}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_DB_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
