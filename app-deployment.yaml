@@ -26,36 +26,33 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: mysql-config
-                  key:  MYSQL_DB_HOST
+                  key: MYSQL_DB_HOST
             - name: MYSQL_DB_DNAME
               valueFrom:
                 configMapKeyRef:
                   name: mysql-config
-                  key:  MYSQL_DB_DNAME
-            - name: MYSQL_DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key:  MYSQL_DB_USERNAME
+                  key: MYSQL_DB_DNAME
+            - name: DB_USERNAME
+              value: "root"  # Correction de l'indentation ici
             - name: MYSQL_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
-                  key:  MYSQL_DB_PASSWORD
+                  name: mysql-secrets
+                  key: password
 
 ---
 
-apiVersion: v1                # API version
-kind: Service                 # Type of the kubernetes resource
+apiVersion: v1
+kind: Service
 metadata:
-  name: springboot-srv    # Name of the kubernetes resource
-  labels:                     # Labels that will be applied to this resource
+  name: springboot-srv
+  labels:
     app: springboot-srv
 spec:
-  type: NodePort              # The service will be exposed by opening a Port on each node and proxying it.
+  type: NodePort
   selector:
-    app: springboot   # The service exposes Pods with label `app=polling-app-server`
-  ports:                      # Forward incoming connections on port 8080 to the target port 8080
+    app: springboot
+  ports:
     - name: http
       port: 8080
       targetPort: 8080

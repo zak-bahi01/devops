@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-depl
+  name: mysql
   labels:
     app: mysql
 spec:
@@ -17,29 +17,20 @@ spec:
       containers:
         - name: mysql
           image: mysql
-          ports:
-            - containerPort: 3306
           env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: root
             - name: MYSQL_DATABASE
               valueFrom:
                 configMapKeyRef:
                   name: mysql-config
                   key: MYSQL_DB_DNAME
-            - name: MYSQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_DB_USERNAME
-            - name: MYSQL_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secrets
-                  key: MYSQL_DB_PASSWORD
-            - name: MYSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: MYSQL_DB_PASSWORD
+          ports:
+            - containerPort: 3306
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
