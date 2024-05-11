@@ -32,8 +32,6 @@ spec:
                 configMapKeyRef:
                   name: mysql-config
                   key: MYSQL_DB_DNAME
-            - name: DB_USERNAME
-              value: "root"  # Correction de l'indentation ici
             - name: MYSQL_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
