@@ -38,3 +38,17 @@ spec:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pv-claim
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldb
+spec:
+  selector:                       # Selects any Pod with labels `app=polling-app,tier=mysql`
+    app: mysql
+  ports:
+    - port: 3306
+  clusterIP: None
