@@ -79,7 +79,7 @@ pipeline {
         }
 
 
-         stage('Deploy Elements') {
+         stage('Deploy Elements into Kubernetees') {
             steps {
                 script {
                     bat 'kubectl apply -f C:\\Users\\lenovo\\.jenkins\\jobs\\CI-CD\\workspace\\mysql-secrets.yaml'
