@@ -11,7 +11,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout by webhook') {
             steps {
                 script {
                     git branch: 'master', url: 'https://github.com/am36166/Spring-Boot-App.git'
