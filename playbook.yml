@@ -14,7 +14,7 @@
 
     - name: Create Docker Compose file
       ansible.builtin.copy:
-        dest: /opt/docker-compose.yml
+        dest: /home/devops/docker-compose.yml
         content: |
           version: '3.7'
           services:
@@ -56,4 +56,4 @@
 
     - name: Bring up Docker Compose stack
       ansible.builtin.shell: |
-        docker compose -f /opt/docker-compose.yml up -d
+        docker compose -f /home/devops/docker-compose.yml up -d
