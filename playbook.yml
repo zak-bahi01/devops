@@ -1,44 +1,59 @@
 ---
-- hosts: all
-  vars:
-    mysql_db_host: "localhost"
-    mysql_db_port: "3306"
-    mysql_db_dname: "DB"
-    mysql_db_user: "root"
-    mysql_db_password: "root"
-
+- name: Deploy Spring Boot and MySQL using Docker Compose
+  hosts: all
+  become: yes
+  become_method: sudo
+  become_user: root
   tasks:
-    - name: Copier le fichier WAR
-      copy:
-        src: /home/vagrant/Product-0.0.1-SNAPSHOT.jar
-        dest: /home/devops/Product-0.0.1-SNAPSHOT.jar
 
-    - name: Copier le Dockerfile
-      copy:
-        src: /home/vagrant/Dockerfile
-        dest: /home/devops/Dockerfile
-
-    - name: Copier le fichier docker-compose.yml
-      copy:
-        src: /home/vagrant/docker-compose.yml
-        dest: /home/devops/docker-compose.yml
-
-    - name: Déployer la stack Docker Compose
-      shell: |
-        export MYSQL_DB_HOST={{ mysql_db_host }}
-        export MYSQL_DB_PORT={{ mysql_db_port }}
-        export MYSQL_DB_DNAME={{ mysql_db_dname }}
-        export MYSQL_DB_USER={{ mysql_db_user }}
-        export MYSQL_DB_PASSWORD={{ mysql_db_password }}
-        docker compose -f /home/devops/docker-compose.yml up
-      args:
-        chdir: /home/devops
-      environment:
-        MYSQL_DB_HOST: "{{ mysql_db_host }}"
-        MYSQL_DB_PORT: "{{ mysql_db_port }}"
-        MYSQL_DB_DNAME: "{{ mysql_db_dname }}"
-        MYSQL_DB_USER: "{{ mysql_db_user }}"
-        MYSQL_DB_PASSWORD: "{{ mysql_db_password }}"
+    - name: Create Docker network
+      community.docker.docker_network:
+        name: springboot-mysql-network
+        state: present
 
 
+    - name: Create Docker Compose file
+      ansible.builtin.copy:
+        dest: /opt/docker-compose.yml
+        content: |
+          version: '3.7'
+          services:
+            app:
+              image: amdevops36/enhancedcicd:latest
+              ports:
+                - 8080:8080
+              depends_on:
+                mysqldb:
+                  condition: service_healthy
+              environment:
+                - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/DB?allowPublicKeyRetrieval=true&useSSL=false
+                - SPRING_DATASOURCE_USERNAME=root
+                - SPRING_DATASOURCE_PASSWORD=root
+              networks:
+                - springboot-mysql-network
+            mysqldb:
+              image: mysql:8.0.33
+              ports:
+                - 3306:3306
+              environment:
+                - MYSQL_DATABASE=DB
+                - MYSQL_ROOT_PASSWORD=root
+              volumes:
+                - mysql-data:/var/lib/mysql
+              networks:
+                - springboot-mysql-network
+              healthcheck:
+                test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+                retries: 10
+                interval: 3s
+                timeout: 30s
+              command: ["bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"]
+          volumes:
+            mysql-data:
+          networks:
+            springboot-mysql-network:
+              external: true
 
+    - name: Bring up Docker Compose stack
+      ansible.builtin.shell: |
+        docker compose -f /opt/docker-compose.yml up -d
