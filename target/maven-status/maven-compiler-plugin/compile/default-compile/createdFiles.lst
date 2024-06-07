@@ -1,0 +1,10 @@
+com\Fsac\Product\Entite\Categorie.class
+com\Fsac\Product\ServletInitializer.class
+com\Fsac\Product\Repository\ProductRepository.class
+com\Fsac\Product\Entite\Product.class
+com\Fsac\Product\RestApi\RestApi.class
+com\Fsac\Product\Service\ImpProductService.class
+com\Fsac\Product\Repository\categoryRepository.class
+com\Fsac\Product\Entite\Product$ProductBuilder.class
+com\Fsac\Product\ProductApplication.class
+com\Fsac\Product\Service\IProductService.class

@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mysql-config
-data:
-  MYSQL_DB_DNAME: "springbootdb"
-  MYSQL_DB_HOST: "mysqldb"
