@@ -18,7 +18,7 @@
       ansible.builtin.copy:
         dest: "{{ docker_compose_dest }}"
         content: |
-          version: '3.7'
+          version: '3.3'
           services:
             app:
               image: bahizak01/devops:latest
