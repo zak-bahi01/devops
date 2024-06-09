@@ -6,7 +6,6 @@
   become_user: root
   vars:
     docker_compose_dest: /home/vagrant/docker-compose.yml
-    app_image: bahizak01/devops:latest
   tasks:
 
     - name: Create Docker network
@@ -22,7 +21,7 @@
           version: '3.7'
           services:
             app:
-              image: "{{ app_image }}"
+              image: bahizak01/devops:latest
               ports:
                 - 8080:8080
               depends_on:
