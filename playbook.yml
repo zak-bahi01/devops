@@ -43,6 +43,7 @@
                 - mysql-data:/var/lib/mysql
               networks:
                 - springboot-mysql-network
+              command: ["bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"]
           volumes:
             mysql-data:
           networks:
