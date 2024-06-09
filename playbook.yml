@@ -4,6 +4,9 @@
   become: yes
   become_method: sudo
   become_user: root
+  vars:
+    docker_compose_dest: /home/vagrant/docker-compose.yml
+    app_image: bahizak01/devops:latest
   tasks:
 
     - name: Create Docker network
@@ -14,12 +17,12 @@
 
     - name: Create Docker Compose file
       ansible.builtin.copy:
-        dest: /home/devops/docker-compose.yml
+        dest: "{{ docker_compose_dest }}"
         content: |
           version: '3.7'
           services:
             app:
-              image: bahizak01/devops:latest
+              image: "{{ app_image }}"
               ports:
                 - 8080:8080
               depends_on:
@@ -56,4 +59,4 @@
 
     - name: Bring up Docker Compose stack
       ansible.builtin.shell: |
-        docker compose -f /home/devops/docker-compose.yml up -d
+        docker compose -f "{{ docker_compose_dest }}" up -d
