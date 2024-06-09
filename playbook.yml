@@ -58,4 +58,4 @@
 
     - name: Bring up Docker Compose stack
       ansible.builtin.shell: |
-        docker compose -f "{{ docker_compose_dest }}" up -d
+        docker compose -f {{ docker_compose_dest }} up -d
