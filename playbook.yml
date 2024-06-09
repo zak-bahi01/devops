@@ -19,7 +19,7 @@
           version: '3.7'
           services:
             app:
-              image: amdevops36/enhancedcicd:latest
+              image: bahizak01/devops:latest
               ports:
                 - 8080:8080
               depends_on:
