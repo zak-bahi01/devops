@@ -18,14 +18,15 @@
       ansible.builtin.copy:
         dest: "{{ docker_compose_dest }}"
         content: |
-          version: '3.3'
+          version: '3.7'
           services:
             app:
               image: bahizak01/devops:latest
               ports:
                 - 8080:8080
               depends_on:
-                - mysqldb
+                mysqldb:
+                  condition: service_healthy
               environment:
                 - SPRING_DATASOURCE_URL=jdbc:mysql://mysqldb:3306/DB?allowPublicKeyRetrieval=true&useSSL=false
                 - SPRING_DATASOURCE_USERNAME=root
@@ -43,6 +44,11 @@
                 - mysql-data:/var/lib/mysql
               networks:
                 - springboot-mysql-network
+              healthcheck:
+                test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+                interval: 3s
+                timeout: 30s
+                retries: 10
               command: ["bash", "-c", "rm -rf /var/lib/mysql/* && docker-entrypoint.sh --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci"]
           volumes:
             mysql-data:
@@ -52,4 +58,4 @@
 
     - name: Bring up Docker Compose stack
       ansible.builtin.shell: |
-        docker-compose -f {{ docker_compose_dest }} up -d
+        docker compose -f {{ docker_compose_dest }} up -d
