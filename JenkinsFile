@@ -1,0 +1,77 @@
+pipeline {
+    agent any
+    
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+        DOCKER_REPO = 'bahizak01/devops'
+        REMOTE = 'zaki@192.168.80.3'
+        DESTINATION = '/home/zaki/'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'a6ba30b2-8feb-4137-9f48-d0c39b21f9b6', url: 'https://github.com/zak-bahi01/devops.git'
+            }
+        }
+        
+        stage('Maven build') {
+            steps {
+                script {
+                    bat 'mvn install -DskipTests'
+                }
+            }
+        }
+        
+        stage('OWASP Dependency-Check'){
+            steps {
+                dependencyCheck additionalArguments: '--scan "./" -o "./" --format "XML" --prettyPrint', odcInstallation: 'owasp-scan'
+                dependencyCheckPublisher pattern: 'dependency-check-report.xml'
+            }
+        }
+        
+        stage('Sonarqube Analysis'){
+            steps {
+                withSonarQubeEnv('sonar') {
+                    bat " ${SCANNER_HOME}/bin/sonar-scanner -D sonar.java.binaries=. -D sonar.projectKey=DevOps_Project -D sonar.projectName=DevOps_Project "
+                }
+            }
+        }
+        
+        stage('Docker Build'){
+            steps {
+                script {
+                    bat 'docker build -t spring-app:latest .'
+                }
+            }
+        }
+        
+        stage('Trivy Image Scan'){
+            steps {
+                script {
+                    bat "trivy image -f table -o scan.txt spring-app:latest"
+                }
+            }
+        }
+        
+        stage('Docker push'){
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-repo'){
+                        bat "docker tag spring-app ${DOCKER_REPO}:latest"
+                        bat "docker push ${DOCKER_REPO}:latest"
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to remote VM with Ansible') {
+            steps {
+                script {
+                    bat "scp playbook.yml ${REMOTE}:${DESTINATION}"
+                    bat "ssh ${REMOTE} ansible-playbook playbook.yml"
+                }
+            }
+        }
+    }
+}
